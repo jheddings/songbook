@@ -1,0 +1,118 @@
+<?
+define("CHORD_PRE", "<span class=\"chord-pre\"><span class=\"chord\">");
+define("CHORD_POST", "</span></span>");
+
+function render_chord_line($line) {
+  $lyrics = $line["lyrics"];
+  $chords = $line["chords"];
+
+  if ($lyrics == null) {
+    foreach ($chords as $position => $chord) {
+      echo CHORD_PRE;
+      echo $chord;
+      echo CHORD_POST;
+    }
+  } else if ($chords != null) {
+    $offset = 0;
+    foreach ($chords as $position => $chord) {
+      echo substr($lyrics, $offset, ($position - $offset));
+
+      echo CHORD_PRE;
+      echo $chord;
+      echo CHORD_POST;
+
+      $offset = $position;
+    }
+    echo substr($lyrics, $offset);
+  }
+}
+
+$song = $tmpl["song"];
+?>
+
+<html>
+<head>
+  <!-- $Id: chords.tmpl 24 2008-04-11 04:40:31Z jheddings $ -->
+  <title><?= $song->title ?></title>
+  <link href="styles/default.css" rel="Stylesheet" type="text/css" />
+  <link href="styles/chords.css" rel="Stylesheet" type="text/css" />
+
+  <style media="screen" type="text/css">
+    .print-control { font-family: Arial; font-size: 8pt; }
+  </style>
+  <style media="print" type="text/css">
+    .print-control { display: none; }
+  </style>
+
+  <script language="javascript">
+    function safe_remove() {
+      if (confirm("Are you aure you want to delete '<?= $song->title ?>'?")) {
+        window.location="edit.php?remove=<?= $song->id ?>";
+      }
+    }
+  </script>
+</head>
+
+
+<body bgcolor="#ffffff" style="margin: 5px 25px;">
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td nowrap align="left" class="title"><?= $song->title ?></td>
+      <td nowrap align="right" class="author"><?= $song->author ?></td>
+
+      <td class="print-control" valign="middle" align="right" nowrap>
+        <a href="index.php" class="print-control">Home</a> |
+        <a href="#" onclick="print();" class="print-control">Print</a> |
+        <? if ($tmpl["user"] != "guest") { ?>
+        <a href="edit.php?id=<?= $song->id ?>" class="print-control">Edit</a> |
+        <a href="#" onclick="safe_remove();" class="print-control">Delete</a> |
+        <? } ?>
+        <a href="dl.php?fmt=pdf&id=<?= $song->id ?>&capo=<?= $song->capo ?>" class="print-control">PDF</a>
+
+        <form method="get" action="chords.php">
+          Transpose:
+          <input type="hidden" name="id" value="<?= $song->id ?>" />
+          <select onchange="this.form.submit();" name="capo" class="text">
+<?
+  for ($pos = -9; $pos <= 9; $pos++) {
+    printf("<option value=\"%d\"", $pos);
+    if ($song->capo == $pos) { echo "selected"; }
+    echo ">";
+    if ($pos > 0) { echo "+"; }
+    printf("%d</option>", $pos);
+  }
+?>
+          </select>
+        </form>
+      </td>
+    </tr>
+  </table>
+  <hr noshade>
+
+<?
+foreach ($song->chords as $section => $lines) {
+  if (is_array($lines)) {
+?>
+  <dl class="stanza">
+    <dt><?= $section ?></dt>
+  <? foreach ($lines as $line) { ?>
+    <dd><? render_chord_line($line); ?></dd>
+  <? } ?>
+  </dl>
+
+<? } else { ?>
+  <div class="annotation"><?= $lines ?></div>
+<?
+  }
+}
+?>
+
+  <hr noshade>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td nowrap align="left" class="footer">Used by permission, CCLI# 2752477</td>
+      <td nowrap align="right" class="footer">The Ridge Community Church</td>
+    </tr>
+  </table>
+</body>
+</html>

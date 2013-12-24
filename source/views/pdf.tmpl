@@ -1,0 +1,17 @@
+<?php  // $Id: pdf.tmpl 17 2008-04-10 05:50:57Z jheddings $
+
+require_once("include/class/cpdf.inc");
+$song = $tmpl["song"];
+
+// set up the general page info
+$pdf = new CPDF();
+$pdf->SetTitle($song->title);
+$pdf->SetAuthor($song->author);
+$pdf->SetCreator($gConfig["organization"]);
+
+$pdf->AddPage();
+$pdf->AddSong($song);
+
+// send the PDF output
+$pdf->Output($song->title . ".pdf", "D");
+?>

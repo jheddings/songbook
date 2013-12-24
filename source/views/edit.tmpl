@@ -1,0 +1,49 @@
+<? $song = $tmpl["song"]; ?>
+
+<html>
+<head>
+  <!-- $Id: edit.tmpl 23 2008-04-11 03:30:27Z jheddings $ -->
+  <title><?= $song->title ?></title>
+  <link href="styles/default.css" rel="Stylesheet" type="text/css" />
+</head>
+
+<body bgcolor="#ffffff">
+  <form method="post" action="edit.php" enctype="multipart/form-data">
+  <? if ($song) { ?>
+    <input type="hidden" name="do-save" value="true">
+    <input type="hidden" name="id" value="<?= $song->id ?>">
+  <? } else { ?>
+    <input type="hidden" name="do-new" value="true">
+  <? } ?>
+    <table border="1" cellpadding="2" cellspagin="2">
+      <tr>
+        <th>Title:</th>
+        <td class="text" valign="top"><input class="text" name="title" type="text" size="40" value="<?= $song->title ?>"></td>
+      </tr>
+      <tr>
+        <th>Author:</th>
+        <td class="text" valign="top"><input class="text" name="author" type="text" size="40" value="<?= $song->author ?>"></td>
+      </tr>
+      <tr>
+        <th valign="top">Chords:</th>
+        <td class="text"><textarea class="text" name="chords" rows="30" cols="80"><?= $song->raw ?></textarea></td>
+      </tr>
+      <tr>
+        <th>SundayPlus:</th>
+        <td class="text" valign="top">
+          <input type="file" name="ptf" size="40" />
+        <? if ($song->ptf) { ?>
+          [Current File: <?= strlen($song->ptf) ?> bytes]
+        <? } else { ?>
+          [No PTF File]
+        <? } ?>
+        </td>
+      </tr>
+      <tr><td colspan="2" align="center">
+        <input type="submit" value="Save">
+        <input type="button" value="Cancel" onclick="window.location='index.php'">
+      </td></tr>
+    </table>
+  </form>
+</body>
+</html>

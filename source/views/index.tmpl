@@ -1,0 +1,71 @@
+<? $num_songs = count($tmpl["songs"]); ?>
+
+<html>
+<head>
+  <!-- $Id: index.tmpl 17 2008-04-10 05:50:57Z jheddings $ -->
+  <title><?= $gConfig["title"] ?></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link href="styles/default.css" rel="Stylesheet" type="text/css" />
+  <link href="styles/index.css" rel="Stylesheet" type="text/css" />
+</head>
+
+<body>
+  <div id="song-table">
+    <table border="2" cellpadding="3" cellspacing="3">
+      <tr>
+        <td colspan="3" align="center" nowrap>
+          <? for ($ch = 65; $ch <= 90; $ch++) { ?>
+          <a href="index.php?k=<?= chr($ch) ?>"><?= chr($ch) ?></a> |
+          <? } ?>
+          <a href="index.php">All</a> -
+          Displaying <b><? echo $num_songs ?></b>
+          Record<? if ($num_songs != 1) { echo "s"; } ?>
+        </td>
+      </tr>
+
+      <tr><th>ID</th><th>Title</th><th>Download</th></tr>
+
+    <? if ($num_songs == 0) { ?>
+      <tr><th colspan="3" align="center">NO SONGS IN DATABASE</th></tr>
+    <? } else { ?>
+      <? foreach($tmpl["songs"] as $id => $song) { ?>
+      <tr bgcolor="<?= ($row++ % 2 == 1 ? "#ffffff" : "#cccccc") ?>">
+        <td align="center"><? printf("%03d", $id) ?></td>
+        <td>
+          <a class="title" href="chords.php?id=<?= $id ?>" name="<?= $id ?>"><?= $song["title"] ?></a>
+        </td>
+        <td align="center"> |
+        <? if ($song["ptf"] ) { ?>
+          <a href="dl.php?fmt=ptf&id=<?= $id ?>">SundayPlus</a> |
+        <? } ?>
+        <? if (strlen(trim($song["chords"])) > 0) { ?>
+          <a href="dl.php?fmt=pdf&id=<?= $id ?>">PDF</a> |
+        <? } ?>
+          <!--<a href="dl.php?fmt=raw&id=<?= $id ?>">Raw</a> |-->
+          <!--<a href="dl.php?fmt=dump&id=<?= $id ?>">Dump</a> | -->
+        </td>
+      </tr>
+      <? } ?>
+    <? } ?>
+    </table>
+  </div>
+
+  <div id="control-table">
+    <p class="welcome">Welcome, <?= $tmpl["user"] ?></p>
+
+    <? if ($tmpl["user"] != "guest" ) { ?>
+    <p>
+      <a class="global-nav" href="edit.php">&middot; New Chord Sheet</a><br>
+      <a class="global-nav" href="backup.php">&middot; Backup Database</a><br>
+    </p>
+    <? } ?>
+
+    <p>
+      <a href="http://www.adobe.com/products/acrobat/readstep2.html">
+        <img title="Get Adobe Reader" src="http://wwwimages.adobe.com/images/get_adobe_reader.gif" alt="Get Adobe Reader" height="31" width="88" border="0" align="left" />
+      </a>
+      In order to view PDF documents,<br> download Adobe's free reader.
+    </p>
+  </div>
+</body>
+</html>
